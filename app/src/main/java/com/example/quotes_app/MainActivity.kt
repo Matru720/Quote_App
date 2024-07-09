@@ -40,7 +40,7 @@ fun App() {
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        delay(3000) // Simulate loading delay
+        delay(1000) // Simulate loading delay
         DataManager.loadAssetsFromFile(context)
     }
 
