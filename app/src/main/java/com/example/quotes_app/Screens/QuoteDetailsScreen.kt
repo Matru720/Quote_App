@@ -61,7 +61,7 @@ fun QuoteDetails(quote: Quote) {
                         .padding(16.dp, 24.dp)
                 ) {
                     Image(
-                        imageVector = Icons.Outlined.FormatQuote,
+                        painter = painterResource(id = R.drawable.quotation_mark),
                         contentDescription = "Quote",
                         modifier = Modifier
                             .size(80.dp)
