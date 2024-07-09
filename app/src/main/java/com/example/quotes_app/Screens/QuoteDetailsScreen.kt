@@ -6,14 +6,16 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.FormatQuote
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -29,6 +31,7 @@ fun QuoteDetails(quote: Quote) {
         DataManager.backToList()
     }
     val context = LocalContext.current
+    var isFavorite by remember { mutableStateOf(DataManager.isFavorite(quote)) }
 
     Box(
         contentAlignment = Alignment.Center,
@@ -80,24 +83,41 @@ fun QuoteDetails(quote: Quote) {
                     )
                 }
             }
-            FilledIconButton(
-                onClick = {
-                    val shareIntent = Intent.createChooser(Intent().apply {
-                        action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_TEXT, "\"${quote.text}\" - ${quote.author}")
-                        type = "text/plain"
-                    }, null)
-                    context.startActivity(shareIntent)
-                },
-//                modifier = Modifier
-//                    .padding(16.dp)
-//                    .fillMaxWidth()
-//                    .height(50.dp)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.share),
-                    contentDescription = ""
-                )
+            Row {
+                FilledIconButton(
+                    onClick = {
+                        val shareIntent = Intent.createChooser(Intent().apply {
+                            action = Intent.ACTION_SEND
+                            putExtra(Intent.EXTRA_TEXT, "\"${quote.text}\" - ${quote.author}")
+                            type = "text/plain"
+                        }, null)
+                        context.startActivity(shareIntent)
+                    }
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.share),
+                        contentDescription = "Share"
+                    )
+                }
+                FilledTonalIconButton(
+                    modifier = Modifier
+                        .padding(start = 16.dp),
+                    onClick = {
+                        isFavorite = !isFavorite
+                        if (isFavorite) {
+                            DataManager.addFavorite(quote)
+                        } else {
+                            DataManager.removeFavorite(quote)
+                        }
+                    }
+                ) {
+                    Image(
+                        colorFilter = ColorFilter.tint(Color.Black),
+                        imageVector = if (isFavorite) Icons.Outlined.Favorite
+                        else Icons.Outlined.FavoriteBorder,
+                        contentDescription = "Favorite"
+                    )
+                }
             }
         }
     }

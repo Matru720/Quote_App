@@ -17,6 +17,9 @@ object DataManager {
     private val quotesPerPage = 10
     private const val PREFS_NAME = "QuotesAppPrefs"
     private const val PREF_QUOTE_INDEX = "quoteIndex"
+    private const val PREF_FAVORITES = "favorites"
+
+    val favoriteQuotes = mutableStateOf(listOf<Quote>())
 
     fun loadAssetsFromFile(context: Context) {
         val inputStream = context.assets.open("quotes.json")
@@ -29,9 +32,14 @@ object DataManager {
         val quotes: Array<Quote> = Gson().fromJson(json, listType)
         allQuotes.addAll(quotes)
 
-        // Load quoteIndex from SharedPreferences
+        // Load quoteIndex and favorites from SharedPreferences
         val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         quoteIndex = sharedPreferences.getInt(PREF_QUOTE_INDEX, 0)
+        val favoritesJson = sharedPreferences.getString(PREF_FAVORITES, null)
+        if (favoritesJson != null) {
+            val favoritesType = object : TypeToken<List<Quote>>() {}.type
+            favoriteQuotes.value = Gson().fromJson(favoritesJson, favoritesType)
+        }
 
         loadNextQuotes()
     }
@@ -67,7 +75,24 @@ object DataManager {
         val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         with(sharedPreferences.edit()) {
             putInt(PREF_QUOTE_INDEX, quoteIndex)
+            putString(PREF_FAVORITES, Gson().toJson(favoriteQuotes.value))
             apply()
         }
+    }
+
+    fun switchToFavorites() {
+        currentPage.value = Pages.Favorites
+    }
+
+    fun addFavorite(quote: Quote) {
+        favoriteQuotes.value = favoriteQuotes.value + quote
+    }
+
+    fun removeFavorite(quote: Quote) {
+        favoriteQuotes.value = favoriteQuotes.value - quote
+    }
+
+    fun isFavorite(quote: Quote): Boolean {
+        return favoriteQuotes.value.contains(quote)
     }
 }

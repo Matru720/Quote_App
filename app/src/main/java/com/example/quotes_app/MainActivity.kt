@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.example.quotes_app.Screens.FavoritesScreen
 import com.example.quotes_app.Screens.QuoteDetails
 import com.example.quotes_app.Screens.QuoteListScreen
 import kotlinx.coroutines.delay
@@ -45,13 +46,15 @@ fun App() {
     }
 
     if (DataManager.isDataLoaded.value) {
-        if (DataManager.currentPage.value == Pages.Listings) {
-            QuoteListScreen(data = DataManager.currentQuotes.value) {
+        when (DataManager.currentPage.value) {
+            Pages.Listings -> QuoteListScreen(data = DataManager.currentQuotes.value) {
                 DataManager.switchPages(it)
             }
-        } else {
-            DataManager.currentQuote?.let {
+            Pages.Details -> DataManager.currentQuote?.let {
                 QuoteDetails(quote = it)
+            }
+            Pages.Favorites -> FavoritesScreen {
+                DataManager.switchPages(it)
             }
         }
     } else {
@@ -75,5 +78,6 @@ fun IndeterminateCircularIndicator() {
 
 enum class Pages {
     Listings,
-    Details
+    Details,
+    Favorites
 }
