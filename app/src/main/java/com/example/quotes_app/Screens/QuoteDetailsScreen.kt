@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -30,16 +31,16 @@ import com.example.quotes_app.DataManager
 import com.example.quotes_app.Models.Quote
 import com.example.quotes_app.R
 
-
 @Composable
 fun QuoteDetails(quote: Quote) {
     BackHandler {
-        DataManager.switchPages(null)
+        DataManager.backToList()
+        // Handle back navigation if needed
     }
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
-            .fillMaxSize(1f)
+            .fillMaxSize()
             .background(
                 Brush.linearGradient(
                     listOf(
@@ -61,11 +62,11 @@ fun QuoteDetails(quote: Quote) {
                     .align(Alignment.Start)
             ) {
                 Image(
-                    imageVector = Icons.Outlined.FormatQuote,
+                    painter = painterResource(id = R.drawable.quotation_mark),
                     contentDescription ="Quote",
                     modifier = Modifier
                         .size(80.dp)
-                        .rotate(180f)
+                        //.rotate(180f)
                 )
                 Text(text = quote.text,
                     fontFamily = FontFamily(Font(R.font.poppins_bold)),
@@ -75,7 +76,6 @@ fun QuoteDetails(quote: Quote) {
                 Text(text = quote.author,
                     fontFamily = FontFamily(Font(R.font.poppins_regular)),
                     style = MaterialTheme.typography.bodyLarge,)
-
             }
         }
     }
